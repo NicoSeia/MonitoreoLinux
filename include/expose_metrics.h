@@ -13,6 +13,12 @@
 #include <string.h>
 #include <unistd.h> // Para sleep
 
+/**
+ * @brief Tamaño del buffer utilizado para leer datos del sistema de archivos /proc.
+ *
+ * Esta constante define el tamaño del buffer que se utiliza para almacenar
+ * temporalmente los datos leídos desde archivos del sistema.
+ */
 #define BUFFER_SIZE 256
 
 /**
