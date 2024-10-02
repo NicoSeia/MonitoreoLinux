@@ -3,14 +3,16 @@
  * @brief Entry point of the system
  */
 
-#include "expose_metrics.h"
+#include "../include/expose_metrics.h"
+#include "../include/metrics.h"
+#include "expose_metrics.c"
 #include <stdbool.h>
 
 #define SLEEP_TIME 1
 
 int main(int argc, char* argv[])
 {
-
+    init_metrics();
     // Creamos un hilo para exponer las métricas vía HTTP
     pthread_t tid;
     if (pthread_create(&tid, NULL, expose_metrics, NULL) != 0)
@@ -24,6 +26,10 @@ int main(int argc, char* argv[])
     {
         update_cpu_gauge();
         update_memory_gauge();
+        update_disk_gauge("sda");
+        update_net_gauge("enp1s0");
+        update_procs_gauge();
+        update_ctxt_gauge();
         sleep(SLEEP_TIME);
     }
 

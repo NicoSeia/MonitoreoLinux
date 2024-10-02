@@ -1,4 +1,11 @@
-#include "metrics.h"
+#include "../include/metrics.h"
+
+typedef struct
+{
+    char interface_name[32];
+    unsigned long long rx_packages; // Paquetes recibidos
+    unsigned long long tx_packages; // Paquetes transmitidos
+} NetUsage;
 
 double get_memory_usage()
 {
@@ -110,4 +117,196 @@ double get_cpu_usage()
     prev_steal = steal;
 
     return cpu_usage_percent;
+}
+
+double get_disk_usage(const char* disk_name)
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long long reads_completed = 0, writes_completed = 0;
+    unsigned long long read_time = 0, write_time = 0;
+    unsigned long long time_weighted_io = 0;
+
+    // Abrir el archivo /proc/diskstats
+    fp = fopen("/proc/diskstats", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/diskstats");
+        return -1.0;
+    }
+
+    // Leer y procesar todas las líneas del archivo /proc/diskstats
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        char device_name[32];
+
+        // Escanear el nombre del dispositivo y los campos necesarios
+        int ret = sscanf(buffer, "%*d %*d %31s %llu %*s %*s %llu %llu %*s %*s %llu %*s %*s %llu %*s %*s %*s %*s %*s",
+                         device_name, &reads_completed, &read_time, &writes_completed, &write_time, &time_weighted_io);
+
+        // Comparar el nombre del dispositivo con el nombre del disco pasado
+        if (ret == 5 && strcmp(device_name, disk_name) == 0)
+        {
+            break; // Si encontramos una coincidencia, salimos del bucle
+        }
+    }
+
+    fclose(fp);
+
+    // Verificar si se encontraron estadísticas del disco
+    if (reads_completed == 0 && writes_completed == 0)
+    {
+        fprintf(stderr, "Error: No se encontraron estadísticas para el disco %s\n", disk_name);
+        return -1.0;
+    }
+
+    // Imprimir los valores capturados
+    // printf("Lecturas completadas: %llu\n", reads_completed);
+    // printf("Tiempo de lectura: %llu ms\n", read_time);
+    // printf("Escrituras completadas: %llu\n", writes_completed);
+    // printf("Tiempo de escritura: %llu ms\n", write_time);
+    // printf("Tiempo ponderado de IO: %llu ms\n", time_weighted_io);
+
+    // Calcular el porcentaje de uso del disco
+    unsigned long long total_io_time = read_time + write_time;
+    double disk_usage_percent = 0.0;
+
+    // Verificar si el tiempo ponderado de IO es mayor que cero antes de calcular el porcentaje
+    if (time_weighted_io > 0)
+    {
+        disk_usage_percent = (double)total_io_time / time_weighted_io * 100.0;
+    }
+
+    return disk_usage_percent;
+}
+
+NetUsage get_net_usage(const char* interface_name)
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    NetUsage net_usage = {0}; // Inicializar estructura a cero
+
+    // Abrir el archivo /proc/net/dev
+    fp = fopen("/proc/net/dev", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/net/dev");
+        return net_usage; // Devuelve estructura vacía en caso de error
+    }
+
+    // Leer líneas y procesar
+    // Saltar las dos primeras líneas (cabeceras)
+    fgets(buffer, sizeof(buffer), fp);
+    fgets(buffer, sizeof(buffer), fp);
+
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        // Escanear el nombre de la interfaz y los bytes recibidos y transmitidos
+        char iface[32];
+        unsigned long long rx_packages, tx_packages;
+
+        // Aquí cambiamos el formato de scanf para incluir un tratamiento de espacios
+        int ret =
+            sscanf(buffer, " %31[^:]: %*u %llu %*u %*u %*u %*u %*u %*u %*u %llu", iface, &rx_packages, &tx_packages);
+
+        // printf("ret: %d, iface: '%s', rx_bytes: %llu, tx_bytes: %llu\n", ret, iface, rx_packages, tx_packages);
+
+        // Comparar el nombre de la interfaz con el pasado
+        if (ret == 3 && strcmp(iface, interface_name) == 0)
+        {
+            // Asignar valores a la estructura
+            strncpy(net_usage.interface_name, iface, sizeof(net_usage.interface_name) - 1);
+            net_usage.rx_packages = rx_packages;
+            net_usage.tx_packages = tx_packages;
+            break; // Salir del bucle si encontramos la interfaz
+        }
+    }
+
+    if (net_usage.rx_packages == 0 && net_usage.tx_packages == 0)
+    {
+        printf("No se encontró la interfaz %s o no hay datos.\n", interface_name);
+    }
+    else
+    {
+        // printf("Interfaz: %s\n", net_usage.interface_name);
+        // printf("Paquetes recibidos: %llu\n", net_usage.rx_packages);
+        // printf("Paquetes transmitidos: %llu\n", net_usage.tx_packages);
+    }
+
+    fclose(fp);
+    return net_usage; // Retorna la estructura con los valores encontrados
+}
+
+int get_process_usage()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned int total_process = 0;
+
+    // Abrir el archivo /proc/meminfo
+    fp = fopen("/proc/stat", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/stat");
+        return -1.0;
+    }
+
+    // Leer los valores de procesos en ejecucion
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        if (strncmp(buffer, "procs_running", 13) == 0)
+        {
+            // Extraer el número de procesos en ejecución
+            sscanf(buffer, "procs_running %u", &total_process);
+            break; // Salir del bucle ya que hemos encontrado lo que buscamos
+        }
+    }
+
+    fclose(fp);
+
+    // Verificar si se encontraron ambos valores
+    if (total_process == 0)
+    {
+        fprintf(stderr, "Error al leer la información de procesos desde /proc/stat\n");
+        return -1.0;
+    }
+
+    return total_process;
+}
+
+double get_ctxt_usage()
+{
+    FILE* fp;
+    char buffer[BUFFER_SIZE];
+    unsigned long ctxt = 0;
+
+    // Abrir el archivo /proc/meminfo
+    fp = fopen("/proc/stat", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/stat");
+        return -1.0;
+    }
+
+    // Leer los valores de cambios de contextos desde que se inicio el sistema
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        if (strncmp(buffer, "ctxt", 4) == 0)
+        {
+            // Extraer el número de cambios de contextos
+            sscanf(buffer, "ctxt %lu", &ctxt);
+            break; // Salir del bucle ya que hemos encontrado lo que buscamos
+        }
+    }
+
+    fclose(fp);
+
+    // Verificar si se encontraron ambos valores
+    if (ctxt == 0)
+    {
+        fprintf(stderr, "Error al leer la información de cambios de contextos desde /proc/stat\n");
+        return -1.0;
+    }
+
+    return (double)ctxt;
 }
