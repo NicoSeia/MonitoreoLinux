@@ -1,9 +1,36 @@
 #include "../include/metrics.h"
 
+/**
+ * @struct NetUsage
+ * @brief Estructura que almacena información sobre el uso de red de una interfaz específica.
+ *
+ * Esta estructura contiene el nombre de la interfaz de red y los paquetes recibidos y transmitidos
+ * por dicha interfaz. Es utilizada para obtener métricas de red desde el archivo `/proc/net/dev`.
+ */
 typedef struct
 {
+    /**
+     * @brief Nombre de la interfaz de red.
+     *
+     * Este campo contiene el nombre de la interfaz de red (como "eth0", "wlan0", etc.).
+     * Se almacena un máximo de 31 caracteres más el terminador nulo.
+     */
     char interface_name[32];
+
+    /**
+     * @brief Número de paquetes recibidos.
+     *
+     * Este campo almacena la cantidad total de paquetes recibidos por la interfaz de red
+     * desde que se inició el sistema.
+     */
     unsigned long long rx_packages; // Paquetes recibidos
+
+    /**
+     * @brief Número de paquetes transmitidos.
+     *
+     * Este campo almacena la cantidad total de paquetes transmitidos por la interfaz de red
+     * desde que se inició el sistema.
+     */
     unsigned long long tx_packages; // Paquetes transmitidos
 } NetUsage;
 
