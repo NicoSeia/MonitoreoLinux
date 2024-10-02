@@ -72,7 +72,7 @@ int get_process_usage();
  * @brief Obtiene el numero de cambios de contexto.
  *
  * Lee los valores necesarios para calcular el contexto de uso del sistema.
- * 
+ *
  * @return Numero de cambios de contexto, o -1 en caso de error.
  */
 double get_ctxt_usage();

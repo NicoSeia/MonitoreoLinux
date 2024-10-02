@@ -27,14 +27,14 @@ void update_memory_gauge();
 
 /**
  * @brief Actualiza la métrica de uso del estado del disco.
- * 
+ *
  * @param disk_name Nombre del disco (por ejemplo, "sda1") del cual se obtiene la métrica.
  */
 void update_disk_gauge(const char* disk_name);
 
 /**
  * @brief Actualiza la métrica de uso de la red.
- * 
+ *
  * @param interface_name Nombre de la red (por ejemplo, "enp1s0") del cual se obtiene la métrica.
  */
 void update_net_gauge(const char* interface_name);

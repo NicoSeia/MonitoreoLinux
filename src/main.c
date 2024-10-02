@@ -9,16 +9,16 @@
 #include <stdbool.h>
 
 /**
-* @brief Tiempo de espera en segundos entre actualizaciones de métricas.
-*/
+ * @brief Tiempo de espera en segundos entre actualizaciones de métricas.
+ */
 #define SLEEP_TIME 1
 
 /**
  * @brief Entry point of the system.
  *
  * Este es el punto de entrada de la aplicación. Se encarga de inicializar las métricas,
- * crear un hilo para exponer las métricas a través de HTTP y actualizar periódicamente 
- * las métricas del sistema en un bucle infinito. 
+ * crear un hilo para exponer las métricas a través de HTTP y actualizar periódicamente
+ * las métricas del sistema en un bucle infinito.
  *
  * @param argc Número de argumentos de línea de comandos.
  * @param argv Array de argumentos de línea de comandos.
