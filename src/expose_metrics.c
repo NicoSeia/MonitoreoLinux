@@ -84,7 +84,6 @@ void update_network_gauge()
     }
 }
 
-
 void update_procs_gauge()
 {
     int procs_usage = get_process_usage();
@@ -179,8 +178,9 @@ void init_metrics()
     }
 
     // Creamos la métrica para los bytes recibidos de la red
-    network_usage_metric = prom_gauge_new("network_usage_metric", "PBytes totales enviados por la interfaz de red", 0, NULL);
-    if (network_usage_metric== NULL)
+    network_usage_metric =
+        prom_gauge_new("network_usage_metric", "Bytes totales enviados por la interfaz de red", 0, NULL);
+    if (network_usage_metric == NULL)
     {
         fprintf(stderr, "Error al crear la métrica de bytes totales\n");
     }
