@@ -2,8 +2,9 @@
 CC = gcc                         # El compilador
 CFLAGS = -Wall -g                # Flags para el compilador (habilitar todas las advertencias y depuración)
 LDFLAGS = -lprom -pthread -lpromhttp  # Librerías externas que estás usando
-SRC = main.c 					 # Archivos fuente
-OBJ = $(SRC:.c=.o)               # Archivos objeto generados a partir de los archivos fuente
+SRC_DIR = src                    # Directorio de archivos fuente
+SRC = $(SRC_DIR)/main.c          # Solo el archivo main.c
+OBJ = $(SRC:.c=.o)               # Archivo objeto generado a partir del archivo fuente
 TARGET = metrics                 # Nombre del ejecutable final
 
 # Regla para compilar todo
@@ -14,7 +15,7 @@ $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LDFLAGS)
 
 # Regla para compilar archivos .c en .o
-%.o: %.c
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Limpia los archivos objeto y el ejecutable
