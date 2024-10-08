@@ -40,10 +40,8 @@ void update_disk_gauge(const char* disk_name);
 
 /**
  * @brief Actualiza la métrica de uso de la red.
- *
- * @param interface_name Nombre de la red (por ejemplo, "enp1s0") del cual se obtiene la métrica.
  */
-void update_net_gauge(const char* interface_name);
+void update_network_gauge();
 
 /**
  * @brief Actualiza la métrica de procesos en ejecucion.

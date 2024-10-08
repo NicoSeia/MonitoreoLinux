@@ -57,7 +57,7 @@ double get_disk_usage(const char* disk_name);
  *        las estadísticas.
  * @return Estructura NetUsage que contiene los datos de uso de la interfaz de red.
  */
-NetUsage get_net_usage(const char* interface_name);
+double get_network_usage(const char* interface_name);
 
 /**
  * @brief Obtiene el número de procesos en ejecución desde /proc/stat.

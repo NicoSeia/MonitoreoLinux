@@ -1,39 +1,5 @@
 #include "../include/metrics.h"
 
-/**
- * @struct NetUsage
- * @brief Estructura que almacena información sobre el uso de red de una interfaz específica.
- *
- * Esta estructura contiene el nombre de la interfaz de red y los paquetes recibidos y transmitidos
- * por dicha interfaz. Es utilizada para obtener métricas de red desde el archivo `/proc/net/dev`.
- */
-typedef struct
-{
-    /**
-     * @brief Nombre de la interfaz de red.
-     *
-     * Este campo contiene el nombre de la interfaz de red (como "eth0", "wlan0", etc.).
-     * Se almacena un máximo de 31 caracteres más el terminador nulo.
-     */
-    char interface_name[32];
-
-    /**
-     * @brief Número de paquetes recibidos.
-     *
-     * Este campo almacena la cantidad total de paquetes recibidos por la interfaz de red
-     * desde que se inició el sistema.
-     */
-    unsigned long long rx_packages; // Paquetes recibidos
-
-    /**
-     * @brief Número de paquetes transmitidos.
-     *
-     * Este campo almacena la cantidad total de paquetes transmitidos por la interfaz de red
-     * desde que se inició el sistema.
-     */
-    unsigned long long tx_packages; // Paquetes transmitidos
-} NetUsage;
-
 double get_memory_usage()
 {
     FILE* fp;
@@ -207,61 +173,43 @@ double get_disk_usage(const char* disk_name)
     return disk_usage_percent;
 }
 
-NetUsage get_net_usage(const char* interface_name)
+double get_network_usage(const char* interface)
 {
     FILE* fp;
     char buffer[BUFFER_SIZE];
-    NetUsage net_usage = {0}; // Inicializar estructura a cero
+    unsigned long long int rx_bytes = 0, tx_bytes = 0;
 
     // Abrir el archivo /proc/net/dev
     fp = fopen("/proc/net/dev", "r");
     if (fp == NULL)
     {
         perror("Error al abrir /proc/net/dev");
-        return net_usage; // Devuelve estructura vacía en caso de error
+        return -1.0;
     }
 
-    // Leer líneas y procesar
-    // Saltar las dos primeras líneas (cabeceras)
+    // Saltar las dos primeras líneas
     fgets(buffer, sizeof(buffer), fp);
     fgets(buffer, sizeof(buffer), fp);
 
     while (fgets(buffer, sizeof(buffer), fp) != NULL)
     {
-        // Escanear el nombre de la interfaz y los bytes recibidos y transmitidos
         char iface[32];
-        unsigned long long rx_packages, tx_packages;
+        // Leer el nombre de la interfaz
+        sscanf(buffer, "%31s", iface); // Limitar a 31 caracteres para evitar desbordamiento
 
-        // Aquí cambiamos el formato de scanf para incluir un tratamiento de espacios
-        int ret =
-            sscanf(buffer, " %31[^:]: %*u %llu %*u %*u %*u %*u %*u %*u %*u %llu", iface, &rx_packages, &tx_packages);
-
-        // printf("ret: %d, iface: '%s', rx_bytes: %llu, tx_bytes: %llu\n", ret, iface, rx_packages, tx_packages);
-
-        // Comparar el nombre de la interfaz con el pasado
-        if (ret == 3 && strcmp(iface, interface_name) == 0)
+        if (strncmp(iface, interface, strlen(interface)) == 0)
         {
-            // Asignar valores a la estructura
-            strncpy(net_usage.interface_name, iface, sizeof(net_usage.interface_name) - 1);
-            net_usage.rx_packages = rx_packages;
-            net_usage.tx_packages = tx_packages;
-            break; // Salir del bucle si encontramos la interfaz
+            // Cambiar el formato para que coincida con las variables
+            sscanf(buffer, "%*s %llu %*d %*d %*d %*d %*d %*d %llu", &rx_bytes, &tx_bytes);
+            break;
         }
     }
 
-    if (net_usage.rx_packages == 0 && net_usage.tx_packages == 0)
-    {
-        printf("No se encontró la interfaz %s o no hay datos.\n", interface_name);
-    }
-    else
-    {
-        // printf("Interfaz: %s\n", net_usage.interface_name);
-        // printf("Paquetes recibidos: %llu\n", net_usage.rx_packages);
-        // printf("Paquetes transmitidos: %llu\n", net_usage.tx_packages);
-    }
-
     fclose(fp);
-    return net_usage; // Retorna la estructura con los valores encontrados
+
+    double total_bytes = (double)(rx_bytes + tx_bytes);
+
+    return total_bytes;
 }
 
 int get_process_usage()

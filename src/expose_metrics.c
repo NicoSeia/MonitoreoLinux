@@ -1,5 +1,4 @@
 #include "../include/expose_metrics.h"
-#include "metrics.c"
 
 /** Mutex para sincronización de hilos */
 pthread_mutex_t lock;
@@ -13,11 +12,8 @@ static prom_gauge_t* memory_usage_metric;
 /** Métrica de Prometheus para el uso del disco */
 static prom_gauge_t* disk_usage_metric;
 
-/** Métrica de Prometheus para los bytes recibidos */
-static prom_gauge_t* net_rx_packages_metric;
-
-/** Métrica de Prometheus para los bytes transmitidos */
-static prom_gauge_t* net_tx_packages_metric;
+/** Métrica de Prometheus para los bytes totales */
+static prom_gauge_t* network_usage_metric;
 
 /** Métrica de Prometheus para los procesos en ejecucion */
 static prom_gauge_t* procs_usage_metric;
@@ -73,14 +69,13 @@ void update_disk_gauge(const char* disk_name)
     }
 }
 
-void update_net_gauge(const char* interface_name)
+void update_network_gauge()
 {
-    NetUsage net_usage = get_net_usage(interface_name);
-    if (net_usage.rx_packages >= 0 && net_usage.tx_packages >= 0)
+    double usage = get_network_usage("lo");
+    if (usage >= 0)
     {
         pthread_mutex_lock(&lock);
-        prom_gauge_set(net_rx_packages_metric, net_usage.rx_packages, NULL); // Métrica para paquetes recibidos
-        prom_gauge_set(net_tx_packages_metric, net_usage.tx_packages, NULL); // Métrica para paquetes transmitidos
+        prom_gauge_set(network_usage_metric, usage, NULL);
         pthread_mutex_unlock(&lock);
     }
     else
@@ -88,6 +83,7 @@ void update_net_gauge(const char* interface_name)
         fprintf(stderr, "Error al obtener el uso de red\n");
     }
 }
+
 
 void update_procs_gauge()
 {
@@ -183,17 +179,10 @@ void init_metrics()
     }
 
     // Creamos la métrica para los bytes recibidos de la red
-    net_rx_packages_metric = prom_gauge_new("net_rx_packages", "Paquetes recibidos por la interfaz de red", 0, NULL);
-    if (net_rx_packages_metric == NULL)
+    network_usage_metric = prom_gauge_new("network_usage_metric", "PBytes totales enviados por la interfaz de red", 0, NULL);
+    if (network_usage_metric== NULL)
     {
-        fprintf(stderr, "Error al crear la métrica de paquetes recibidos de la red\n");
-    }
-
-    // Creamos la métrica para los paquetes transmitidos de la red
-    net_tx_packages_metric = prom_gauge_new("net_tx_packages", "Paquetes transmitidos por la interfaz de red", 0, NULL);
-    if (net_tx_packages_metric == NULL)
-    {
-        fprintf(stderr, "Error al crear la métrica de paquetes transmitidos de la red\n");
+        fprintf(stderr, "Error al crear la métrica de bytes totales\n");
     }
 
     // Creamos la métrica para el uso de los procesos en ejecucion
@@ -223,13 +212,9 @@ void init_metrics()
     {
         fprintf(stderr, "Error al registrar las métricas - disk\n");
     }
-    if (prom_collector_registry_must_register_metric(net_rx_packages_metric) == NULL)
+    if (prom_collector_registry_must_register_metric(network_usage_metric) == NULL)
     {
-        fprintf(stderr, "Error al registrar las métricas - paquetes recibidos\n");
-    }
-    if (prom_collector_registry_must_register_metric(net_tx_packages_metric) == NULL)
-    {
-        fprintf(stderr, "Error al registrar las métricas - paquetes transmitidos\n");
+        fprintf(stderr, "Error al registrar las métricas - bytes totales\n");
     }
     if (prom_collector_registry_must_register_metric(procs_usage_metric) == NULL)
     {
