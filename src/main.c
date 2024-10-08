@@ -5,8 +5,6 @@
 
 #include "../include/expose_metrics.h"
 #include "../include/metrics.h"
-#include "expose_metrics.c"
-#include "metrics.c"
 #include <stdbool.h>
 
 /**
