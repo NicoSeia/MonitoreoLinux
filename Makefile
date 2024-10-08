@@ -1,6 +1,6 @@
 # Define variables
 CC = gcc                         # El compilador
-CFLAGS = -Wall -g                # Flags para el compilador (habilitar todas las advertencias y depuración)
+CFLAGS = -Wall -g -Iinclude      # Flags para el compilador (habilitar todas las advertencias y depuración) y agregar la ruta de los encabezados
 LDFLAGS = -lprom -pthread -lpromhttp  # Librerías externas que estás usando
 
 # Especifica los archivos fuente
