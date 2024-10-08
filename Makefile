@@ -1,26 +1,28 @@
-# Define variables
-CC = gcc                         # El compilador
-CFLAGS = -Wall -g -Iinclude      # Flags para el compilador (habilitar todas las advertencias y depuración) y agregar la ruta de los encabezados
-LDFLAGS = -lprom -pthread -lpromhttp  # Librerías externas que estás usando
+# Nombre del ejecutable
+TARGET = metrics
 
-# Especifica los archivos fuente
-SRC = src/main.c                 # Archivo fuente principal
-OBJ = $(SRC:.c=.o)               # Archivos objeto generados a partir de los archivos fuente
-TARGET = metrics                 # Nombre del ejecutable final
+# Directorios de código fuente y encabezados
+SRC_DIR = src
+INCLUDE_DIR = include
 
-# Regla para compilar todo
+# Archivos fuente
+SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/metrics.c $(SRC_DIR)/expose_metrics.c
+
+# Librerías
+LIBS = -lprom -pthread -lpromhttp
+LDFLAGS = -L/usr/local/lib
+CFLAGS = -I$(INCLUDE_DIR) -I/usr/local/include/
+
+# Exportar la variable de entorno LD_LIBRARY_PATH
+export LD_LIBRARY_PATH := /usr/local/lib:$(LD_LIBRARY_PATH)
+
+# Regla por defecto (se ejecuta al correr 'make')
 all: $(TARGET)
 
-# Regla para generar el archivo ejecutable
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LDFLAGS)
+# Regla para compilar el programa
+$(TARGET): $(SRCS)
+	$(CC) $(SRCS) $(CFLAGS) $(LDFLAGS) $(LIBS) -o $(TARGET)
 
-# Regla para compilar archivos .c en .o
-%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Limpia los archivos objeto y el ejecutable
+# Regla para limpiar los archivos generados
 clean:
-	rm -f $(OBJ) $(TARGET)
-
-.PHONY: all clean
+	rm -f $(TARGET)
