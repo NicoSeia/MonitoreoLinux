@@ -39,10 +39,10 @@ double get_cpu_usage();
 /**
  * @brief Obtiene las estadísticas de uso de disco para un dispositivo específico.
  *
- * Lee las estadísticas del disco desde /proc/diskstats y devuelve el número de lecturas 
+ * Lee las estadísticas del disco desde /proc/diskstats y devuelve el número de lecturas
  * y escrituras completadas para el dispositivo especificado.
  *
- * @return El número total de lecturas y escrituras completadas. 
+ * @return El número total de lecturas y escrituras completadas.
  */
 double get_disk_usage();
 
