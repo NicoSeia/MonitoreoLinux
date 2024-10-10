@@ -42,8 +42,7 @@ double get_cpu_usage();
  * Lee las estadísticas del disco desde /proc/diskstats y devuelve el número de lecturas 
  * y escrituras completadas para el dispositivo especificado.
  *
- * @return Una estructura `diskUsage` que contiene el número de lecturas y escrituras completadas. 
- * Si ocurre un error, la estructura devolverá ambos valores en 0.
+ * @return El número total de lecturas y escrituras completadas. 
  */
 double get_disk_usage();
 

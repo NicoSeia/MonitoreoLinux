@@ -133,8 +133,8 @@ double get_disk_usage()
         char device_name[32];
 
         // Escanear el nombre del dispositivo y los campos necesarios
-        int ret = sscanf(buffer, "%*d %*d %31s %llu %*s %*s %*s %llu",
-                         device_name, &reads_completed, &writes_completed);
+        int ret =
+            sscanf(buffer, "%*d %*d %31s %llu %*s %*s %*s %llu", device_name, &reads_completed, &writes_completed);
 
         // Comparar el nombre del dispositivo con el nombre del disco pasado
         if (ret == 5 && strcmp(device_name, "sdb") == 0)
@@ -152,7 +152,7 @@ double get_disk_usage()
         return usage;
     }
 
-    //Calculo total de escrituras y lecturas
+    // Calculo total de escrituras y lecturas
     double total = reads_completed + writes_completed;
 
     return total;
