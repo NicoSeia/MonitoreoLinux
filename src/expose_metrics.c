@@ -53,15 +53,14 @@ void update_memory_gauge()
     }
 }
 
-void update_disk_gauge(const char* disk_name)
+void update_disk_gauge()
 {
-    double usage = get_disk_usage(disk_name);
+    double usage = get_disk_usage();
     if (usage >= 0)
     {
         pthread_mutex_lock(&lock);
         prom_gauge_set(disk_usage_metric, usage, NULL);
         pthread_mutex_unlock(&lock);
-        // printf("Actualizando métrica de disco: %f\n", usage);
     }
     else
     {
@@ -171,7 +170,7 @@ void init_metrics()
     }
 
     // Creamos la métrica para el uso del disco
-    disk_usage_metric = prom_gauge_new("disk_usage_percentage", "Porcentaje de uso del disco", 0, NULL);
+    disk_usage_metric = prom_gauge_new("disk_usage", "Lecturas y escrituras totales completadas del disco", 0, NULL);
     if (disk_usage_metric == NULL)
     {
         fprintf(stderr, "Error al crear la métrica de uso del disco\n");

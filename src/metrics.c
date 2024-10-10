@@ -112,13 +112,12 @@ double get_cpu_usage()
     return cpu_usage_percent;
 }
 
-double get_disk_usage(const char* disk_name)
+double get_disk_usage()
 {
     FILE* fp;
     char buffer[BUFFER_SIZE];
     unsigned long long reads_completed = 0, writes_completed = 0;
-    unsigned long long read_time = 0, write_time = 0;
-    unsigned long long time_weighted_io = 0;
+    double usage = 0;
 
     // Abrir el archivo /proc/diskstats
     fp = fopen("/proc/diskstats", "r");
@@ -134,11 +133,11 @@ double get_disk_usage(const char* disk_name)
         char device_name[32];
 
         // Escanear el nombre del dispositivo y los campos necesarios
-        int ret = sscanf(buffer, "%*d %*d %31s %llu %*s %*s %llu %llu %*s %*s %llu %*s %*s %llu %*s %*s %*s %*s %*s",
-                         device_name, &reads_completed, &read_time, &writes_completed, &write_time, &time_weighted_io);
+        int ret = sscanf(buffer, "%*d %*d %31s %llu %*s %*s %*s %llu",
+                         device_name, &reads_completed, &writes_completed);
 
         // Comparar el nombre del dispositivo con el nombre del disco pasado
-        if (ret == 5 && strcmp(device_name, disk_name) == 0)
+        if (ret == 5 && strcmp(device_name, "sdb") == 0)
         {
             break; // Si encontramos una coincidencia, salimos del bucle
         }
@@ -149,28 +148,14 @@ double get_disk_usage(const char* disk_name)
     // Verificar si se encontraron estadísticas del disco
     if (reads_completed == 0 && writes_completed == 0)
     {
-        fprintf(stderr, "Error: No se encontraron estadísticas para el disco %s\n", disk_name);
-        return -1.0;
+        fprintf(stderr, "Error: No se encontraron estadísticas para el disco sdb\n");
+        return usage;
     }
 
-    // Imprimir los valores capturados
-    // printf("Lecturas completadas: %llu\n", reads_completed);
-    // printf("Tiempo de lectura: %llu ms\n", read_time);
-    // printf("Escrituras completadas: %llu\n", writes_completed);
-    // printf("Tiempo de escritura: %llu ms\n", write_time);
-    // printf("Tiempo ponderado de IO: %llu ms\n", time_weighted_io);
+    //Calculo total de escrituras y lecturas
+    double total = reads_completed + writes_completed;
 
-    // Calcular el porcentaje de uso del disco
-    unsigned long long total_io_time = read_time + write_time;
-    double disk_usage_percent = 0.0;
-
-    // Verificar si el tiempo ponderado de IO es mayor que cero antes de calcular el porcentaje
-    if (time_weighted_io > 0)
-    {
-        disk_usage_percent = (double)total_io_time / time_weighted_io * 100.0;
-    }
-
-    return disk_usage_percent;
+    return total;
 }
 
 double get_network_usage(const char* interface)
