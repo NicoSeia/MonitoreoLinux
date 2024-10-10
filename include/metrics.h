@@ -37,15 +37,15 @@ double get_memory_usage();
 double get_cpu_usage();
 
 /**
- * @brief Obtiene el porcentaje de uso de disco para un dispositivo específico.
+ * @brief Obtiene las estadísticas de uso de disco para un dispositivo específico.
  *
- * Lee las estadísticas del disco desde /proc/diskstats y calcula el porcentaje de uso
- * basado en el tiempo de lectura y escritura.
+ * Lee las estadísticas del disco desde /proc/diskstats y devuelve el número de lecturas 
+ * y escrituras completadas para el dispositivo especificado.
  *
- * @param disk_name Nombre del disco para el cual se desea calcular el uso.
- * @return Uso del disco como porcentaje (0.0 a 100.0), o -1.0 en caso de error.
+ * @return Una estructura `diskUsage` que contiene el número de lecturas y escrituras completadas. 
+ * Si ocurre un error, la estructura devolverá ambos valores en 0.
  */
-double get_disk_usage(const char* disk_name);
+double get_disk_usage();
 
 /**
  * @brief Obtiene el uso de red de una interfaz específica.
@@ -55,7 +55,7 @@ double get_disk_usage(const char* disk_name);
  *
  * @param interface_name Nombre de la interfaz de red para la cual se desea obtener
  *        las estadísticas.
- * @return Estructura NetUsage que contiene los datos de uso de la interfaz de red.
+ * @return Total de rx y tx que contiene los datos de uso de la interfaz de red.
  */
 double get_network_usage(const char* interface_name);
 
