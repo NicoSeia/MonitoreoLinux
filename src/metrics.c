@@ -1,5 +1,10 @@
 #include "../include/metrics.h"
 
+/**
+ * @brief Tamaño del buffer utilizado para almacenar el nombre del disco.
+ */
+#define SIZE_BUFF 32
+
 double get_memory_usage()
 {
     FILE* fp;
@@ -130,7 +135,7 @@ double get_disk_usage()
     // Leer y procesar todas las líneas del archivo /proc/diskstats
     while (fgets(buffer, sizeof(buffer), fp) != NULL)
     {
-        char device_name[32];
+        char device_name[SIZE_BUFF];
 
         // Escanear el nombre del dispositivo y los campos necesarios
         int ret =
