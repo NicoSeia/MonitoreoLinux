@@ -4,11 +4,24 @@ description: "Executes a compilation."
 runs:
   using: "composite"
   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/lib  
+        key: ${{ runner.os }}-libcache-${{ hashFiles('**/libmicrohttpd-dev') }}
+        restore-keys: |
+          ${{ runner.os }}-libcache-
+
     - name: Set up dependencies
       shell: bash
       run: |
-        sudo apt update
-        sudo apt install libmicrohttpd-dev
+        if [ ! -d /usr/local/lib/libmicrohttpd-dev ]; then
+          sudo apt update
+          sudo apt install -y libmicrohttpd-dev
+        fi
 
     - name: Compile with CMake
       shell: bash
