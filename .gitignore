@@ -12,7 +12,7 @@
 # Build directory
 /build/
 
-# External directoy
+# External directory
 /external/
 
 # Dependency files
@@ -22,7 +22,7 @@
 .vscode/
 .idea/
 
-# Dont track sonnar files
+# Dont track sonar files
 .scannerwork/
 
 # env variables
@@ -30,4 +30,7 @@
 
 # cache
 .cache/
+
+# Ignorar archivo o carpeta metrics
+metrics
 
