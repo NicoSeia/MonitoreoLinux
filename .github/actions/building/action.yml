@@ -10,8 +10,19 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        sudo apt update
-        sudo apt install libmicrohttpd-dev
+        sudo apt-get update
+        sudo apt-get install -y git cmake make gcc libmicrohttpd-dev  # Dependencias para compilar las librerías
+
+    - name: Install libprom from source
+      shell: bash
+      run: |
+        git clone https://github.com/digitalocean/prometheus-client-c.git
+        cd prometheus-client-c
+        mkdir _build
+        cd _build
+        cmake ..
+        make
+        sudo make install  # Instala la librería
 
     - name: Compile
       shell: bash
