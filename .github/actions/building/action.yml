@@ -4,30 +4,17 @@ description: "Executes a compilation."
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install dependencies
+    - name: Set up dependencies
       shell: bash
       run: |
-        sudo apt-get update
-        sudo apt-get install -y git cmake make gcc libmicrohttpd-dev  # Dependencias para compilar las librerías
+        sudo apt update
+        sudo apt install libmicrohttpd-dev
 
-    - name: Install libprom from source
-        shell: bash
-        run: |
-          if [ -d "prometheus-client-c" ]; then
-            rm -rf prometheus-client-c
-          fi
-          git clone https://github.com/digitalocean/prometheus-client-c.git
-          cd prometheus-client-c
-          mkdir _build
-          cd _build
-          cmake ..
-          make
-          sudo make install  # Instala la librería
-
-    - name: Compile
+    - name: Compile with CMake
       shell: bash
       run: |
-        make all
+        mkdir -p build
+        cd build
+        cmake ..
+        make
+  

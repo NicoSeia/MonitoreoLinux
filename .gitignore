@@ -7,7 +7,6 @@
 
 # Compiled libraries
 *.a
-*.so
 
 # Build directory
 /build/
