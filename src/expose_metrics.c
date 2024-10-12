@@ -176,7 +176,7 @@ void init_metrics()
         fprintf(stderr, "Error al crear la métrica de uso del disco\n");
     }
 
-    // Creamos la métrica para los bytes recibidos de la red
+    // Creamos la métrica para los bytes recibidos y enviados de la red
     network_usage_metric =
         prom_gauge_new("network_usage_metric", "Bytes totales enviados por la interfaz de red", 0, NULL);
     if (network_usage_metric == NULL)
