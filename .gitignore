@@ -31,6 +31,3 @@
 # cache
 .cache/
 
-# Ignorar archivo o carpeta metrics
-metrics
-
