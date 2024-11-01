@@ -6,7 +6,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release) 
 endif()
 
-include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+include(${CMAKE_BINARY_DIR}/build/Release/generators/conan_toolchain.cmake)
 
 # Incluir directorios de encabezados
 include_directories(${CMAKE_SOURCE_DIR}/include)
