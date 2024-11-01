@@ -1,10 +1,10 @@
-#include <unistd.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <stdio.h>  
-#include <sys/stat.h> 
-#include <fcntl.h> 
 #include <cjson/cJSON.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /**
  * @struct MetricsConfig
@@ -12,7 +12,8 @@
  *
  * Esta estructura permite habilitar o deshabilitar el monitoreo de cada métrica específica.
  */
-typedef struct {
+typedef struct
+{
     int cpu;
     int memory;
     int disk;
@@ -25,7 +26,7 @@ typedef struct {
  * @brief Lee la configuración de métricas desde un archivo JSON.
  *
  * Esta función abre un archivo JSON especificado, lo lee completamente, y parsea el contenido
- * para extraer la configuración de métricas. Las métricas disponibles incluyen CPU, memoria, 
+ * para extraer la configuración de métricas. Las métricas disponibles incluyen CPU, memoria,
  * disco, red, número de procesos e interrupciones de contexto.
  *
  * @param config_file Ruta del archivo JSON de configuración.
@@ -37,7 +38,7 @@ MetricsConfig read_metrics_config(const char* config_file);
 /**
  * @brief Crea una cadena JSON con las métricas seleccionadas en la configuración.
  *
- * A partir de una estructura `MetricsConfig`, esta función genera un objeto JSON 
+ * A partir de una estructura `MetricsConfig`, esta función genera un objeto JSON
  * que contiene las métricas habilitadas en la configuración. Cada métrica activa
  * se mide mediante funciones auxiliares (no incluidas aquí) que obtienen los valores
  * actuales para CPU, memoria, disco, red, número de procesos e interrupciones de contexto.

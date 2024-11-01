@@ -3,9 +3,9 @@
  * @brief Entry point of the system
  */
 
+#include "../include/config.h"
 #include "../include/expose_metrics.h"
 #include "../include/metrics.h"
-#include "../include/config.h"
 #include <stdbool.h>
 
 /**
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         update_ctxt_gauge();
 
         send_metrics_to_monitor();
-        
+
         sleep(SLEEP_TIME);
     }
 
