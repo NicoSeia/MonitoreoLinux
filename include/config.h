@@ -14,12 +14,12 @@
  */
 typedef struct
 {
-    int cpu;                /**< Estado del monitoreo de CPU: 1 habilitado, 0 deshabilitado. */
-    int memory;             /**< Estado del monitoreo de memoria: 1 habilitado, 0 deshabilitado. */
-    int disk;               /**< Estado del monitoreo de disco: 1 habilitado, 0 deshabilitado. */
-    int network;            /**< Estado del monitoreo de red: 1 habilitado, 0 deshabilitado. */
-    int processes;          /**< Estado del monitoreo del número de procesos: 1 habilitado, 0 deshabilitado. */
-    int context_switches;   /**< Estado del monitoreo de cambios de contexto: 1 habilitado, 0 deshabilitado. */
+    int cpu;              /**< Estado del monitoreo de CPU: 1 habilitado, 0 deshabilitado. */
+    int memory;           /**< Estado del monitoreo de memoria: 1 habilitado, 0 deshabilitado. */
+    int disk;             /**< Estado del monitoreo de disco: 1 habilitado, 0 deshabilitado. */
+    int network;          /**< Estado del monitoreo de red: 1 habilitado, 0 deshabilitado. */
+    int processes;        /**< Estado del monitoreo del número de procesos: 1 habilitado, 0 deshabilitado. */
+    int context_switches; /**< Estado del monitoreo de cambios de contexto: 1 habilitado, 0 deshabilitado. */
 } MetricsConfig;
 
 /**
