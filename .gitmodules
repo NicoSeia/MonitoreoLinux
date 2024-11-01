@@ -1,0 +1,4 @@
+[submodule "prometheus-client-c"]
+	path = prometheus-client-c
+	url = https://github.com/digitalocean/prometheus-client-c.git
+

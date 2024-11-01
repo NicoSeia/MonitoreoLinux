@@ -1,0 +1,34 @@
+# Compiled object files
+*.o
+
+# Executables
+*.exe
+*.out
+
+# Compiled libraries
+*.a
+
+# Build directory
+/build/
+
+# External directory
+/external/
+
+# Dependency files
+*.d
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+
+# Dont track sonar files
+.scannerwork/
+
+# env variables
+.env
+
+# cache
+.cache/
+
+# metrics
+metrics
