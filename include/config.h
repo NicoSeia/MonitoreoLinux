@@ -14,12 +14,12 @@
  */
 typedef struct
 {
-    int cpu;               /**< Indica si se monitorea el uso de CPU (1 para habilitar, 0 para deshabilitar). */
-    int memory;            /**< Indica si se monitorea el uso de memoria (1 para habilitar, 0 para deshabilitar). */
-    int disk;              /**< Indica si se monitorea el uso de disco (1 para habilitar, 0 para deshabilitar). */
-    int network;           /**< Indica si se monitorea el uso de red (1 para habilitar, 0 para deshabilitar). */
-    int processes;         /**< Indica si se monitorea el número de procesos (1 para habilitar, 0 para deshabilitar). */
-    int context_switches;  /**< Indica si se monitorea el número de cambios de contexto (1 para habilitar, 0 para deshabilitar). */
+    int cpu;               //< Indica si se monitorea el uso de CPU (1 para habilitar, 0 para deshabilitar). 
+    int memory;            //< Indica si se monitorea el uso de memoria (1 para habilitar, 0 para deshabilitar). 
+    int disk;              //< Indica si se monitorea el uso de disco (1 para habilitar, 0 para deshabilitar). 
+    int network;           //< Indica si se monitorea el uso de red (1 para habilitar, 0 para deshabilitar). 
+    int processes;         //< Indica si se monitorea el número de procesos (1 para habilitar, 0 para deshabilitar).
+    int context_switches;  //< Indica si se monitorea el número de cambios de contexto (1 para habilitar, 0 para deshabilitar). 
 } MetricsConfig;
 
 /**
