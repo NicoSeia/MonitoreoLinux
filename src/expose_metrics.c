@@ -29,7 +29,6 @@ void update_cpu_gauge()
         pthread_mutex_lock(&lock);
         prom_gauge_set(cpu_usage_metric, usage, NULL);
         pthread_mutex_unlock(&lock);
-        // printf("Actualizando métrica de CPU: %f\n", usage);
     }
     else
     {
