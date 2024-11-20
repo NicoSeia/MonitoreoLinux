@@ -3,7 +3,7 @@
  * @brief Entry point of the system
  */
 
-#include "../include/config.h"
+//#include "../include/config.h"
 #include "../include/expose_metrics.h"
 #include "../include/metrics.h"
 #include <stdbool.h>
@@ -40,12 +40,13 @@ int main(int argc, char* argv[])
     {
         update_cpu_gauge();
         update_memory_gauge();
+        update_memory_fragmentation();
         update_disk_gauge();
         update_network_gauge();
         update_procs_gauge();
         update_ctxt_gauge();
 
-        send_metrics_to_monitor();
+        //send_metrics_to_monitor();
 
         sleep(SLEEP_TIME);
     }

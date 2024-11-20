@@ -48,6 +48,42 @@ double get_memory_usage()
     return mem_usage_percent;
 }
 
+double get_memory_fragmentation()
+{
+    FILE* fp = fopen("/proc/meminfo", "r");
+    if (fp == NULL)
+    {
+        perror("Error al abrir /proc/meminfo");
+        return -1.0;
+    }
+
+    char buffer[BUFFER_SIZE];
+    unsigned long long total_mem = 0, free_mem = 0;
+
+    while (fgets(buffer, sizeof(buffer), fp) != NULL)
+    {
+        if (sscanf(buffer, "MemTotal: %llu kB", &total_mem) == 1)
+            continue;
+        if (sscanf(buffer, "MemFree: %llu kB", &free_mem) == 1)
+            continue;
+    }
+
+    fclose(fp);
+
+    if (total_mem == 0)
+    {
+        fprintf(stderr, "Error: MemTotal no encontrado\n");
+        return -1.0;
+    }
+
+    // Simular la fragmentación como una proporción de la memoria libre
+    double fragmented_mem = free_mem * 0.1; // Suponiendo 10% de la memoria libre está fragmentada
+
+    // Calcular la tasa de fragmentación
+    double fragmentation_ratio = (double)fragmented_mem / total_mem;
+    return fragmentation_ratio * 100.0; // Convertir a porcentaje
+}
+
 double get_cpu_usage()
 {
     static unsigned long long prev_user = 0, prev_nice = 0, prev_system = 0, prev_idle = 0, prev_iowait = 0,

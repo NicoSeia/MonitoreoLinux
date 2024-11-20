@@ -27,6 +27,17 @@
 double get_memory_usage();
 
 /**
+ * @brief Obtiene el porcentaje de memoria fragmentada desde /proc/meminfo.
+ *
+ * Lee los valores de memoria total y disponible desde /proc/meminfo y calcula
+ * el porcentaje de uso de memoria fragmentada, suponiendo que la memoria libre
+ * fragmentada es del 10%.
+ *
+ * @return Memoria fragmentada como porcentaje (0.0 a 100.0), o -1.0 en caso de error.
+ */
+double get_memory_fragmentation();
+
+/**
  * @brief Obtiene el porcentaje de uso de CPU desde /proc/stat.
  *
  * Lee los tiempos de CPU desde /proc/stat y calcula el porcentaje de uso de CPU

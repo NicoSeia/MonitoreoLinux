@@ -9,6 +9,9 @@ static prom_gauge_t* cpu_usage_metric;
 /** Métrica de Prometheus para el uso de memoria */
 static prom_gauge_t* memory_usage_metric;
 
+/** Métrica de Prometheus para la memoria framentada */
+static prom_gauge_t* memory_fragmentation_metric;
+
 /** Métrica de Prometheus para el uso del disco */
 static prom_gauge_t* disk_usage_metric;
 
@@ -50,6 +53,22 @@ void update_memory_gauge()
     {
         fprintf(stderr, "Error al obtener el uso de memoria\n");
     }
+}
+
+void update_memory_fragmentation()
+{
+    double usage = get_memory_fragmentation();
+    if (usage >= 0)
+    {
+        pthread_mutex_lock(&lock);
+        prom_gauge_set(memory_fragmentation_metric, usage, NULL);
+        pthread_mutex_unlock(&lock);
+    }
+    else
+    {
+        fprintf(stderr, "Error al obtener la memoria fragmentada\n");
+    }
+    
 }
 
 void update_disk_gauge()
@@ -168,6 +187,13 @@ void init_metrics()
         fprintf(stderr, "Error al crear la métrica de uso de memoria\n");
     }
 
+    // Creamos la métrica para la cantidad de memoria fragmentada
+    memory_fragmentation_metric = prom_gauge_new("memory_fragmentation_percentage", "Porcentaje de memoria fragmentada", 0, NULL);
+    if (memory_fragmentation_metric == NULL)
+    {
+        fprintf(stderr, "Error al crear la métrica de memoria fragmentada\n");
+    }
+
     // Creamos la métrica para el uso del disco
     disk_usage_metric = prom_gauge_new("disk_usage", "Lecturas y escrituras totales completadas del disco", 0, NULL);
     if (disk_usage_metric == NULL)
@@ -201,6 +227,10 @@ void init_metrics()
     if (prom_collector_registry_must_register_metric(memory_usage_metric) == NULL)
     {
         fprintf(stderr, "Error al registrar las métricas - memoria\n");
+    }
+    if (prom_collector_registry_must_register_metric(memory_fragmentation_metric) == NULL)
+    {
+        fprintf(stderr, "Error al registrar las métricas - memoria fragmentada\n");
     }
     if (prom_collector_registry_must_register_metric(cpu_usage_metric) == NULL)
     {
